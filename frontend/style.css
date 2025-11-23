@@ -30,3 +30,191 @@ body {
 }
 
 /* ---- Your custom styles below ---- */
+/* ---- Your custom styles below ---- */
+
+/* Layout / page structure */
+.header {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem auto;
+    padding: 0 1rem;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.subtitle {
+    margin-top: 0.25rem;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.layout {
+    max-width: 1100px;
+    margin: 0 auto 2rem auto;
+    padding: 0 1rem 2rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+/* Panels (left: table, right: forms) */
+.panel {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+.panel h2 {
+    margin-top: 0;
+}
+
+/* Status bar */
+.status-bar {
+    min-height: 1.5rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.status-info {
+    background-color: #e6f0ff;
+    color: #1f4e8c;
+}
+
+.status-success {
+    background-color: #e7f7ec;
+    color: #216437;
+}
+
+.status-error {
+    background-color: #fde8e8;
+    color: #a12626;
+}
+
+/* Average price row */
+.average-row {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+/* Table styles */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.medicines-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.medicines-table thead {
+    background-color: #f0f0f0;
+}
+
+.medicines-table th,
+.medicines-table td {
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.medicines-table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+/* Forms */
+.form-section {
+    margin-bottom: 1.5rem;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+.form-section:first-of-type {
+    border-top: none;
+    padding-top: 0;
+}
+
+.form-section h3 {
+    margin-top: 0;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.form label {
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.form input[type="text"],
+.form input[type="number"] {
+    padding: 0.5rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 0.95rem;
+}
+
+.form input[type="text"]:focus,
+.form input[type="number"]:focus {
+    border-color: #1f7ed8;
+    box-shadow: 0 0 0 2px rgba(31, 126, 216, 0.15);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 0.9rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    background-color: #e0e0e0;
+    color: #333;
+    transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.btn:hover {
+    background-color: #d0d0d0;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn--primary {
+    background-color: #1f7ed8;
+    color: #ffffff;
+}
+
+.btn--primary:hover {
+    background-color: #1863a6;
+}
+
+.btn--danger {
+    background-color: #d83b3b;
+    color: #ffffff;
+}
+
+.btn--danger:hover {
+    background-color: #a52f2f;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+}
