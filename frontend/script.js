@@ -28,11 +28,9 @@ async function fetchAndRenderMedicines() {
     const data = await response.json();
 
     // The backend returns something like { "medicines": [ ... ] }
-    const medicines = Array.isArray(data)
-      ? data
-      : Array.isArray(data.medicines)
-      ? data.medicines
-      : [];
+    const medicines = Array.isArray(data.medicines) ? data.medicines : [];
+
+
 
     renderMedicines(medicines);
     showStatus(`Loaded ${medicines.length} medicines.`, "success");
