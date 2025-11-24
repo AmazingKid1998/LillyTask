@@ -127,7 +127,11 @@ def delete_med(name: str = Form(...)):
 # Add your average function here
 @app.get("/medicines/average-price")
 def get_average_price():
-    with open('data.json') as meds:
+    """
+    Calculate the average price of all medicines with valid numeric prices.
+    Medicines with missing or non-numeric prices (e.g. 'N/A') are ignored.
+    """
+    with open("data.json") as meds:
         data = json.load(meds)
 
     total = 0.0
@@ -141,9 +145,9 @@ def get_average_price():
             continue
 
         try:
-            price_value = float(price)  # this will fail for "N/A" 
+            price_value = float(price)  # works for numbers and numeric strings
         except (TypeError, ValueError):
-            # If price can't be converted, ignore this medicine
+            # Skip invalid entries, e.g. "N/A"
             continue
 
         total += price_value
@@ -153,15 +157,16 @@ def get_average_price():
         return {
             "average_price": None,
             "count": 0,
-            "message": "No valid prices found"
+            "message": "No valid prices found",
         }
 
     average = total / count
 
     return {
         "average_price": average,
-        "count": count
+        "count": count,
     }
+
 
 
 
