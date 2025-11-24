@@ -2,28 +2,16 @@
 
 ## Approach
 
-I started by getting the project running locally and understanding the existing code before making any changes.
+I focused first on the frontend behaviour and UX, then wired it into the existing backend.
 
-1. **Environment & backend setup**  
-   - Cloned the repository and used the provided `start.bat` script on Windows to create/activate the virtual environment and start the FastAPI backend with Uvicorn.  
-   - Verified the backend was working by calling:
-     - `http://localhost:8000/medicines` in the browser to inspect the JSON structure.
-     - `http://localhost:8000/medicines/{name}` for individual medicines.
-
-2. **Understanding the API & data**  
-   - Looked through `main.py` and `data.json` to understand:
-     - What endpoints already existed (`/medicines`, `/medicines/{name}`, `/create`, `/update`, `/delete`).
-     - The shape of each medicine object and where invalid or missing data might appear.
-   - Noted that the “write” endpoints expect `Form` data rather than JSON, which influenced how I sent data from the frontend.
-
-3. **Frontend planning**  
+1. **Frontend planning**  
    - Decided to build a simple, single-page UI that:
      - Lists all medicines in a table.
      - Provides forms for create/update/delete actions.
      - Shows a status bar for feedback (success/error/info).
    - Kept the HTML structure minimal and handled most of the logic in `script.js` with some basic styling in `style.css`.
 
-4. **Implementation order**  
+2. **Implementation order**  
    I deliberately followed this order to make sure I always had something working:
    1. Fetch and display data from `/medicines`.
    2. Add safe rendering and handling of missing/invalid data.
@@ -31,7 +19,7 @@ I started by getting the project running locally and understanding the existing 
    4. Implement the optional “average price” endpoint in the backend, then expose it in the UI.
    5. Improve the layout and UX with CSS.
 
-5. **Use of external resources**  
+3. **Use of external resources**  
    - Used the FastAPI docs and MDN Web Docs (JavaScript `fetch`, `URLSearchParams`, basic DOM APIs) as references.
    - I treated the internet as a reference only; all code and decisions were adapted to this specific challenge.
 
@@ -78,17 +66,17 @@ To make the backend endpoints easier to use:
 
 For the optional backend objective:
 
-- I added a new endpoint in `main.py` at `/medicines/average-price`.
+- I added a new endpoint in `main.py` at `/medicines/average/price`.
 - The function:
   - Reads `data.json`.
   - Iterates over the `medicines` list.
-  - Attempts to convert each `price` to a float, ignoring any missing, null, or invalid values.
+  - Attempts to convert each `price` to a float, **ignoring** any missing, null, `"N/A"`, or otherwise invalid values.
   - If there are no valid prices, it returns an object with `average_price = None`, `count = 0`, and a message such as `"No valid prices found"`.
   - Otherwise, it calculates the average by summing valid prices and dividing by the count, and returns:
     - `average_price`: the computed average.
     - `count`: how many medicines were included in the calculation.
 - On the frontend, I added a “Show Average Price” button that:
-  - Calls `GET /medicines/average-price`.
+  - Calls `GET /medicines/average/price`.
   - Displays a rounded `average_price` and the `count` of medicines used.
   - Shows an informative message if there are no valid prices.
 
@@ -110,24 +98,20 @@ This demonstrates how I can extend the backend to support new reporting requirem
 
 ## Problems Faced
 
-1. **Initial script execution on Windows (`start.ps1` vs `start.bat`)**  
-   - I initially tried to run `./start.ps1` from Command Prompt and received:  
-     `'.' is not recognized as an internal or external command...`  
-   - I realised that `.ps1` is a PowerShell script and I was in `cmd.exe`. The fix was either:
-     - Run `start.bat` instead from Command Prompt (which I did), or
-     - Use PowerShell to run the `.ps1` script.
-   - Once I ran `start.bat`, the virtual environment activated correctly and Uvicorn started without issues.
+1. **Route conflict between the average endpoint and `/medicines/{name}`**  
+   - Initially, I implemented the average endpoint at `/medicines/average-price`.  
+   - However, FastAPI was matching this path against the existing route `/medicines/{name}`, treating `"average-price"` as if it were a medicine name. That meant the request never reached my average function and always returned `{"error": "Medicine not found"}`.  
+   - I debugged this by:
+     - Checking the automatically generated docs at `/docs` to see which routes were registered.
+     - Calling `/medicines/average-price` directly and confirming that the single-medicine handler was being used.  
+   - To avoid the conflict, I changed the average endpoint to `/medicines/average/price`, which no longer overlaps with `/medicines/{name}`. After updating the frontend to call the new path, the average price started working correctly.
 
-2. **Understanding how data is returned from `/medicines`**  
-   - At first I wasn’t sure if the endpoint returned an array or an object. Inspecting the JSON and reading `main.py` clarified that it returns an object with a `medicines` property.
-   - I adjusted the frontend code accordingly, accessing `data.medicines` and falling back to an empty array if it was missing.
-
-3. **Form encoding vs JSON in POST/DELETE requests**  
+2. **Form encoding vs JSON in POST/DELETE requests**  
    - FastAPI’s `Form(...)` parameters expect form-encoded data, not JSON.
    - My first instinct was to send JSON from the frontend, but this would not bind correctly to `name: str = Form(...)`.
    - I fixed this by using `URLSearchParams` and setting the `Content-Type` to `application/x-www-form-urlencoded`, which worked as expected.
 
-4. **Handling potential invalid data gracefully**  
+3. **Handling potential invalid data gracefully**  
    - While building the rendering logic, I had to think about how to handle undefined, null, or non-numeric values for `price` so the UI wouldn’t break.
    - I addressed this with small helpers and type-checks, and verified that the page continues to work even if some data entries are incomplete.
 
@@ -138,13 +122,13 @@ This demonstrates how I can extend the backend to support new reporting requirem
 Overall, I found the challenge well-structured and realistic: it mirrors a common scenario of working with an existing backend and a barebones frontend and then improving both.
 
 - **What went well**
-  - Getting the backend running and understanding the API from `main.py` was straightforward.
   - The basic fetch + render loop came together quickly once I understood the shape of the data.
   - Adding the average price endpoint was a good opportunity to show backend extension and defensive coding around invalid data.
+  - Handling user actions (create, update, delete) entirely from the frontend made it feel like a realistic small CRUD app.
 
 - **What was more challenging**
   - Being disciplined about error handling and not assuming the data was always clean took a bit more thought.
-  - I had to be careful with how the frontend sent data so it matched FastAPI’s `Form(...)` expectations.
+  - The routing conflict between `/medicines/{name}` and the average endpoint took some debugging before I realised FastAPI was matching the dynamic route first.
 
 - **If I had more time, I would:**
   - Add **search and filtering** on the frontend (e.g. filter medicines by name or by price range).
@@ -153,4 +137,4 @@ Overall, I found the challenge well-structured and realistic: it mirrors a commo
   - Add basic automated tests for the backend (e.g. testing the average price logic and CRUD operations).
   - Consider splitting the frontend JS into smaller modules (e.g. API client, UI rendering, state management) as the app grows.
 
-In summary, I focused on meeting the core objectives first (fetching data, safe rendering, CRUD operations, and a cleaner UI), then used the optional average price feature to demonstrate how I’d extend and use the backend for reporting.
+In summary, I focused on meeting the core objectives first (fetching data, safe rendering, CRUD operations, and a cleaner UI), then used the average price feature to demonstrate how I’d extend and use the backend for reporting and simple analytics.
