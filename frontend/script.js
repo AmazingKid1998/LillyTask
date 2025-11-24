@@ -239,7 +239,7 @@ async function handleDelete(event) {
 
 async function handleAverageClick() {
   try {
-    const response = await fetch(`${API_BASE_URL}/medicines/average-price`);
+    const response = await fetch(`${API_BASE_URL}/medicines/average/price`);
     if (!response.ok) {
       throw new Error(`HTTP error ${response.status}`);
     }
