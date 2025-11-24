@@ -140,26 +140,12 @@ def get_average_price():
     for med in data.get("medicines", []):
         price = med.get("price")
 
-        # Skip if no price at all
         if price is None:
             continue
 
-        # Try to turn the price into a float
         try:
-            # If it's a string, clean it a bit (in case of things like "£5.99")
-            if isinstance(price, str):
-                # Treat explicit "N/A" as invalid
-                if price.strip().upper() == "N/A":
-                    continue
-
-                cleaned = "".join(ch for ch in price if (ch.isdigit() or ch in ".-"))
-                if cleaned == "":
-                    continue
-                price_value = float(cleaned)
-            else:
-                price_value = float(price)
+            price_value = float(price)
         except (TypeError, ValueError):
-            # Anything we can't convert is ignored
             continue
 
         total += price_value
