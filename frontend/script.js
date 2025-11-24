@@ -11,7 +11,7 @@ function showStatus(message, type = "info") {
 
   statusEl.textContent = message;
   statusEl.className = ""; // reset
-  statusEl.classList.add(`status-${type}`); // you can style .status-info / .status-error / .status-success in CSS
+  statusEl.classList.add(`status-${type}`); // for styling
 }
 
 // ------- Fetch & render medicines -------
